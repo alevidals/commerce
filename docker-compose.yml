@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pass123
+
+  kafka:
+    image: apache/kafka:3.7.0
+    ports:
+      - "9092:9092"

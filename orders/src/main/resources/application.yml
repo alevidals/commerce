@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    password: pass123
+  application:
+    name: orders
+  kafka:
+    bootstrapServers: localhost:9092
+  jpa:
+    hibernate:
+      ddl-auto: update
