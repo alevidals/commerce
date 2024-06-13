@@ -1,5 +1,6 @@
 package com.commerce.orders.service.impl;
 
+import com.commerce.orders.exception.UserNotFoundException;
 import com.commerce.orders.model.User;
 import com.commerce.orders.repository.UserRepository;
 import com.commerce.orders.service.UserService;
@@ -32,8 +33,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findOne(UUID id) {
-        return userRepository.findById(id);
+    public User findOne(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
     }
 
     @Override
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
             Optional.ofNullable(user.getSurnames()).ifPresent(existingUser::setSurnames);
 
             return userRepository.save(existingUser);
-        }).orElseThrow(() -> new RuntimeException("User does not exists"));
+        }).orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
     }
 
     @Override

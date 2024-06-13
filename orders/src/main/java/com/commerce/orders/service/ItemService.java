@@ -3,7 +3,6 @@ package com.commerce.orders.service;
 import com.commerce.orders.model.Item;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ItemService {
@@ -11,7 +10,7 @@ public interface ItemService {
 
     List<Item> findAll();
 
-    Optional<Item> findOne(UUID id);
+    Item findOne(UUID id);
 
     boolean exists(UUID id);
 

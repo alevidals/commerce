@@ -1,6 +1,7 @@
 package com.commerce.orders.controller.v1;
 
 import com.commerce.orders.dto.ItemDto;
+import com.commerce.orders.exception.ItemNotFoundException;
 import com.commerce.orders.mapper.ItemMapper;
 import com.commerce.orders.model.Item;
 import com.commerce.orders.service.ItemService;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -40,10 +40,9 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemDto> getItem(@PathVariable UUID id) {
-        Optional<Item> item = itemService.findOne(id);
+        Item item = itemService.findOne(id);
 
-        return item.map(foundItem -> new ResponseEntity<>(itemMapper.itemToItemDto(foundItem), HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(itemMapper.itemToItemDto(item), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
@@ -52,7 +51,7 @@ public class ItemController {
             @RequestBody ItemDto itemDto
     ) {
         if (!itemService.exists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ItemNotFoundException("Item not found with id " + id);
         }
 
         Item item = itemMapper.itemDtoToItem(itemDto);
@@ -63,7 +62,7 @@ public class ItemController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteItem(@PathVariable UUID id) {
         if (!itemService.exists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ItemNotFoundException("Item not found with id " + id);
         }
 
         itemService.delete(id);

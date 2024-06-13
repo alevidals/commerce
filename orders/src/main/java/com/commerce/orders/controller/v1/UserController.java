@@ -1,6 +1,7 @@
 package com.commerce.orders.controller.v1;
 
 import com.commerce.orders.dto.UserDto;
+import com.commerce.orders.exception.UserNotFoundException;
 import com.commerce.orders.mapper.UserMapper;
 import com.commerce.orders.model.User;
 import com.commerce.orders.service.UserService;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -40,10 +40,9 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable UUID id) {
-        Optional<User> user = userService.findOne(id);
+        User user = userService.findOne(id);
 
-        return user.map(foundUser -> new ResponseEntity<>(userMapper.userToUserDto(foundUser), HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(userMapper.userToUserDto(user), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
@@ -52,7 +51,7 @@ public class UserController {
             @RequestBody UserDto userDto
     ) {
         if (!userService.exists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException("User not found with id " + id);
         }
 
         User user = userMapper.userDtoToUser(userDto);
@@ -64,7 +63,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
         if (!userService.exists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException("User not found with id " + id);
         }
 
         userService.delete(id);

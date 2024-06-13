@@ -3,7 +3,6 @@ package com.commerce.orders.service;
 import com.commerce.orders.model.User;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
@@ -11,7 +10,7 @@ public interface UserService {
 
     List<User> findAll();
 
-    Optional<User> findOne(UUID id);
+    User findOne(UUID id);
 
     boolean exists(UUID id);
 

@@ -1,5 +1,6 @@
 package com.commerce.orders.service.impl;
 
+import com.commerce.orders.exception.ItemNotFoundException;
 import com.commerce.orders.model.Item;
 import com.commerce.orders.repository.ItemRepository;
 import com.commerce.orders.service.ItemService;
@@ -32,8 +33,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Optional<Item> findOne(UUID id) {
-        return itemRepository.findById(id);
+    public Item findOne(UUID id) {
+        return itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found with id " + id));
     }
 
     @Override
@@ -50,11 +51,12 @@ public class ItemServiceImpl implements ItemService {
             Optional.ofNullable(item.getImageUrl()).ifPresent(existingItem::setImageUrl);
 
             return itemRepository.save(existingItem);
-        }).orElseThrow(() -> new RuntimeException("Item does not exists"));
+        }).orElseThrow(() -> new ItemNotFoundException("Item not found with id " + id));
     }
 
     @Override
     public void delete(UUID id) {
         itemRepository.deleteById(id);
     }
+
 }
