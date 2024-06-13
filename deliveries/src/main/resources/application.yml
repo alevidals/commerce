@@ -5,7 +5,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     password: pass123
   application:
-    name: orders
+    name: deliveries
   kafka:
     bootstrapServers: localhost:9092
     order: order-topic
@@ -13,4 +13,4 @@ spring:
     hibernate:
       ddl-auto: update
 server:
-  port: 8080
+  port: 8081
