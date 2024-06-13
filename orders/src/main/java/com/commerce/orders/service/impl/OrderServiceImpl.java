@@ -9,6 +9,9 @@ import com.commerce.orders.repository.OrderRepository;
 import com.commerce.orders.service.ItemService;
 import com.commerce.orders.service.OrderService;
 import com.commerce.orders.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +24,12 @@ public class OrderServiceImpl implements OrderService {
     private final UserService userService;
     private final ItemService itemService;
     private final OrderRepository orderRepository;
+
+    @Autowired
+    private KafkaTemplate<String, UUID> kafkaTemplate;
+
+    @Value("${spring.kafka.order}")
+    private String orderTopic;
 
     public OrderServiceImpl(UserService userService, ItemService itemService, OrderRepository orderRepository) {
         this.userService = userService;
@@ -47,7 +56,11 @@ public class OrderServiceImpl implements OrderService {
             );
         }
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        kafkaTemplate.send(orderTopic, savedOrder.getId());
+
+        return savedOrder;
     }
 
     @Override

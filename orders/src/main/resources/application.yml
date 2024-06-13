@@ -8,6 +8,7 @@ spring:
     name: orders
   kafka:
     bootstrapServers: localhost:9092
+    order: order-topic
   jpa:
     hibernate:
       ddl-auto: update
